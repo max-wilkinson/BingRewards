@@ -112,44 +112,58 @@ class BingRewards:
 
     def getLifetimeCredits(self):
         """
-        Returns http://www.bing.com/rewards/dashboard Lifetime Credits
+        Returns https://account.microsoft.com/rewards Lifetime Credits
         The number of credits earned since day one of the account
         """
-        url = "http://www.bing.com/rewards/dashboard"
+        url = "https://account.microsoft.com/rewards"
         request = urllib2.Request(url = url, headers = self.httpHeaders)
         request.add_header("Referer", bingCommon.BING_URL)
         with self.opener.open(request) as response:
+            referer = response.geturl()
             page = helpers.getResponseBody(response)
 
-# parse dashboard page
-        s = page.find('<div class="credits-right')
-        d = page.find('<span class="credits-right')
+# get form data
+        s = page.index('action="')
+        s += len('action="')
+        e = page.index('"', s)
+        action = page[s:e]
 
-        # There are instances where the account appears to be signed in, but really is not
-        helpers.errorOnText(page, "You are not signed", "Temporary account ban: User was not successfully signed in.\n")
+        s = page.index("NAP")
+        s = page.index('value="', s)
+        s += len('value="')
+        e = page.index('"', s)
+        nap = page[s:e]
 
-        if s != -1:
-            s += len('<div class="credits-right')
-            s = page.index('<div class="credits', s)
-            s += len('<div class="credits')
+        s = page.index("ANON")
+        s = page.index('value="', s)
+        s += len('value="')
+        e = page.index('"', s)
+        anon = page[s:e]
 
-        elif d != -1:
-            d += len('<span class="credits-right')
-            d = page.index('<div class="credits', d)
-            d += len('<div class="credits')
-            s = d
+        s = page.index('id="t"')
+        s = page.index('value="', s)
+        s += len('value="')
+        e = page.index('"', s)
+        t = page[s:e]
 
-        else:
-            s = page.index('<div class="data-lifetime')
-            s += len('<div class="data-lifetime')
-            s = page.index('<div class="data-value-text', s)
-            s += len('<div class="data-value-text')
+        postFields = urllib.urlencode({
+            "NAP"    : nap,
+            "ANON"   : anon,
+            "t"      : t
+        })
 
-        s = page.index(">", s) + 1
-        e = page.index('</div>', s)
+        request = urllib2.Request(action, postFields, self.httpHeaders)
+        request.add_header("Referer", referer)
+        with self.opener.open(request) as response:
+            page = helpers.getResponseBody(response)
 
-        result = int(page[s:e])
-        return result
+# find lifetime points
+        s = page.find(' lifetime points</div>') - 20
+        s = page.find('>', s) + 1
+        e = page.find(' ', s)
+        points = page[s:e]
+
+        return int(points.replace(",", "")) # remove commas so we can cast as int
 
     def getRewardsPoints(self):
         """
@@ -226,9 +240,8 @@ class BingRewards:
         BING_QUERY_SUCCESSFULL_RESULT_MARKER_PC = '<div id="b_content">'
         BING_QUERY_SUCCESSFULL_RESULT_MARKER_MOBILE = '<div id="content">'
         IG_PING_LINK = "http://www.bing.com/fd/ls/GLinkPing.aspx"
-        IG_NUMBER_PATTERN = re.compile(r'IG:"(.+?)"')
-        IG_SEARCH_RESULTS_PATTERN = re.compile(r'<ol\s.*?id="b_results"(.+?)</ol>')
-        IG_SEARCHS_PATTERN = re.compile(r'<a\s.*?href="(http.+?)".*?\sh="(.+?)"')
+        IG_NUMBER_PATTERN = re.compile(r'IG:"([^"]+)"')
+        IG_SEARCHES_PATTERN = re.compile(r'<li\s[^>]*class="b_algo"[^>]*><h2><a\s[^>]*href="(http[^"]+)"\s[^>]*h="([^"]+)"')
 
         res = self.RewardResult(reward)
         if reward.isAchieved():
@@ -246,13 +259,20 @@ class BingRewards:
 
 # find out how many searches need to be performed
         matches = bfp.Reward.Type.SEARCH_AND_EARN_DESCR_RE.search(reward.description)
-        rewardsCount    = int(matches.group(1))
-        rewardCost      = int(matches.group(2))
-        maxRewardsCount = int(matches.group(3))
+        if matches is None:
+            print "No RegEx matches found for this search and earn"
+            res.isError = True
+            res.message = "No RegEx matches found for this search and earn"
+            return res
+        maxRewardsCount = int(matches.group(1))
+        rewardsCount    = int(matches.group(2))
+        rewardCost      = 1 # Looks like it's now always X points per one search
         searchesCount = maxRewardsCount * rewardCost / rewardsCount
 
 # adjust to the current progress
-        searchesCount -= reward.progressCurrent * rewardCost
+# reward.progressCurrent is now returning current points, not current searches
+# so divide it by points per search (rewardsCount) to get correct search count needed
+        searchesCount -= (reward.progressCurrent * rewardCost) / rewardsCount
 
         headers = self.httpHeaders
 
@@ -283,6 +303,7 @@ class BingRewards:
             queryGenerator = qg.queryGenerator(self)
         except ImportError:
             raise TypeError("{0} is not a module".format(self.queryGenerator))
+
         # generate a set of queries to run
         queries = queryGenerator.generateQueries(searchesCount, history)
 
@@ -326,42 +347,37 @@ class BingRewards:
                 if self.openLinkChance > random.random():
                     # get IG number
                     ig_number = IG_NUMBER_PATTERN.search(page)
-                    if ig_number != None:
+                    if ig_number is not None:
                         ig_number = ig_number.group(1)
-                        # get search results
-                        ig_results = IG_SEARCH_RESULTS_PATTERN.search(page)
-                        if ig_results != None:
-                            ig_results = ig_results.group(1)
-                            # seperate search results
-                            ig_searches = IG_SEARCHS_PATTERN.findall(ig_results)
-                            # make sure we have at least 1 search
-                            if len(ig_searches) > 0:
-                                # get a random link to open
-                                ig_max_rand = min(self.openTopLinkRange, len(ig_searches) - 1)
-                                ig_link_num = random.randint(0, ig_max_rand)
-                                # number of the link we will use
-                                ig_link = "{0}?IG={1}&{2}".format(
-                                    IG_PING_LINK,
-                                    urllib.quote_plus(ig_number),
-                                    urllib.quote_plus(ig_searches[ig_link_num][1])
-                                )
+                        ig_searches = IG_SEARCHES_PATTERN.findall(page)
+                        # make sure we have at least 1 search
+                        if len(ig_searches) > 0:
+                            # get a random link to open
+                            ig_max_rand = min(self.openTopLinkRange, len(ig_searches) - 1)
+                            # number of the link we will use
+                            ig_link_num = random.randint(0, ig_max_rand)
+                            ig_link = "{0}?IG={1}&{2}".format(
+                                IG_PING_LINK,
+                                urllib.quote_plus(ig_number),
+                                urllib.quote_plus(ig_searches[ig_link_num][1])
+                            )
 
-                                # sleep a reasonable amount of time before clicking the link
-                                # use defaults to save space in config
-                                t = random.uniform(0.75, 3.0)
-                                time.sleep(t)
+                            # sleep a reasonable amount of time before clicking the link
+                            # use defaults to save space in config
+                            t = random.uniform(0.75, 3.0)
+                            time.sleep(t)
 
-                                # open the random link
-                                request = urllib2.Request(url = ig_link, headers = bingCommon.HEADERS)
-                                request.headers["Referer"] = response.url
-                                self.opener.open(request)
+                            # open the random link
+                            request = urllib2.Request(url = ig_link, headers = bingCommon.HEADERS)
+                            request.headers["Referer"] = response.url
+                            self.opener.open(request)
 
-                                if verbose:
-                                    print("Followed Link {}".format(ig_link_num + 1))
-                            else:
-                                filename = helpers.dumpErrorPage(page)
-                                print "Warning! No searches were found on search results page"
-                                print "Check {0} file for more information".format(filename)
+                            if verbose:
+                                print("Followed Link {}".format(ig_link_num + 1))
+                        else:
+                            filename = helpers.dumpErrorPage(page)
+                            print "Warning! No searches were found on search results page"
+                            print "Check {0} file for more information".format(filename)
                     else:
                         filename = helpers.dumpErrorPage(page)
                         print "Warning! Could not find search result IG number"
