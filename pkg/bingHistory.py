@@ -10,7 +10,7 @@ import helpers
 
 def __parseResultsArea1(resultsArea):
     """
-    Parses <div id="resultsArea">...</div> from Bing! history page
+    Parses <div id="resultsArea">...</div> from Bing history page
     Returns a list of queries (can be empty list)
     """
     startMarker = '<span class="query_t">'
@@ -48,7 +48,7 @@ def __isApproach(page, startMarker, endMarker):
 
 def __parseResultsArea2(resultsArea):
     """
-    Parses results from Bing! history page
+    Parses results from Bing history page
     Returns a list of queries (can be empty list)
     """
     startMarker = '<span class="sh_item_qu_query">'
@@ -75,13 +75,13 @@ def __parseResultsArea2(resultsArea):
 
 def parse(page):
     """
-    Parses Bing! history page and returns a set of queries for today
+    Parses Bing history page and returns a set of queries for today
     Can be an empty set
     """
     if page is None: raise TypeError("page is None")
     if page.strip() == "":
         print "-------------------------------"
-        print "Warning: Bing! history is empty"
+        print "Warning: Bing history is empty"
         print "-------------------------------"
         print
         return set()
@@ -101,7 +101,7 @@ def parse(page):
 
 def getBingHistoryTodayURL():
     """
-    Returns URL to today's Bing! history
+    Returns URL to today's Bing history
     i.e. "https://ssl.bing.com/profile/history?d=20121217"
     """
     BING_HISTORY_URL = "https://ssl.bing.com/profile/history?d="

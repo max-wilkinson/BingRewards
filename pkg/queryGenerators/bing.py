@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 #
-# Bing! queries generator
+# Bing queries generator
 # developed by Sergey Markelov (2013)
 #
 
@@ -119,12 +119,12 @@ class queryGenerator:
 
     def generateQueries(self, queriesToGenerate, history, maxQueryLen = MAX_QUERY_LEN):
         """
-        parses Bing! news page and generates a set of unique queries to run on Bing!
+        parses Bing news page and generates a set of unique queries to run on Bing
         A query is considered to be unique if it distingueshes from any other query at
         least in a meaning letter. Where meaning letter is any ASCII charecter, but
         terminators (space, comma, colon, etc.)
 
-        Url good enough to get Bing! news
+        Url good enough to get Bing news
         http://www.bing.com/news?q=world+news
 
         param queriesToGenerate the number of queries to return
