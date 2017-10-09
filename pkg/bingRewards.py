@@ -103,7 +103,7 @@ class BingRewards:
         url = self.BING_FLYOUT_PAGE
         request = urllib2.Request(url = url, headers = self.httpHeaders)
 
-# commenting the line below, because on 10/25/2013 Bing! started to return an empty flyout page if referer is other than http://www.bing.com
+# commenting the line below, because on 10/25/2013 Bing started to return an empty flyout page if referer is other than http://www.bing.com
         #request.add_header("Referer", "http://www.bing.com/rewards/dashboard")
 
         with self.opener.open(request) as response:
@@ -250,7 +250,7 @@ class BingRewards:
 
         indCol = bfp.Reward.Type.Col.INDEX
 
-# get a set of queries from today's Bing! history
+# get a set of queries from today's Bing history
         url = bingHistory.getBingHistoryTodayURL()
         request = urllib2.Request(url = url, headers = self.httpHeaders)
         with self.opener.open(request) as response:
@@ -318,7 +318,7 @@ class BingRewards:
 
         for query in queries:
             if i > 1:
-# sleep some time between queries (don't worry Bing! ;) )
+# sleep some time between queries (don't worry Bing ;) )
                 t = self.betweenQueriesInterval + random.uniform(0, self.betweenQueriesSalt)
                 time.sleep(t)
 

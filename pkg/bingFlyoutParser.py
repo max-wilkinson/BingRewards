@@ -5,7 +5,7 @@
 #
 
 """
-Bing! flyout page parser
+Bing flyout page parser
 
 Usage:
     from bingFlyoutParser import Reward, parseFlyoutPage
@@ -19,7 +19,7 @@ import HTMLParser
 import re
 
 class Reward:
-    "A class to represent a Bing! reward"
+    "A class to represent a Bing reward"
 
     class Type:
         class Action:
@@ -116,7 +116,7 @@ def parseFlyoutPage(page, bing_url):
 ######################################################
 class __HTMLRewardsParser(HTMLParser.HTMLParser):
     """
-    Gets Bing! flyout page starting from tag
+    Gets Bing flyout page starting from tag
     <div id="messageContainer"> to the tag
     <div id="bottomContainer">, excluding the last one
 
