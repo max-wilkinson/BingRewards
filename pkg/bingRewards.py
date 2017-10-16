@@ -92,6 +92,7 @@ class BingRewards:
                                             HTTPRefererHandler,                       # add Referer header on redirect
                                             urllib2.HTTPCookieProcessor(cookies))     # keep cookies
 
+<<<<<<< HEAD
     def getLifetimeCredits(self):
 	page = self.getDashboardPage() 
 	
@@ -100,6 +101,19 @@ class BingRewards:
         s = page.find('>', s) + 1
         e = page.find(' ', s)
         points = page[s:e]
+=======
+    def requestFlyoutPage(self):
+        """
+        Returns bing.com flyout page
+        This page shows what rewarding activity can be performed in
+        order to earn Bing points
+        """
+        url = self.BING_FLYOUT_PAGE
+        request = urllib2.Request(url = url, headers = self.httpHeaders)
+
+# commenting the line below, because on 10/25/2013 Bing started to return an empty flyout page if referer is other than http://www.bing.com
+        #request.add_header("Referer", "http://www.bing.com/rewards/dashboard")
+>>>>>>> upstream/master
 
         return int(points.replace(",", "")) # remove commas so we can cast as int
 
@@ -240,7 +254,7 @@ class BingRewards:
 
         indCol = bdp.Reward.Type.Col.INDEX
 
-# get a set of queries from today's Bing! history
+# get a set of queries from today's Bing history
         url = bingHistory.getBingHistoryTodayURL()
         request = urllib2.Request(url = url, headers = self.httpHeaders)
         with self.opener.open(request) as response:
@@ -308,7 +322,7 @@ class BingRewards:
 
         for query in queries:
             if i > 1:
-# sleep some time between queries (don't worry Bing! ;) )
+# sleep some time between queries (don't worry Bing ;) )
                 t = self.betweenQueriesInterval + random.uniform(0, self.betweenQueriesSalt)
                 time.sleep(t)
 

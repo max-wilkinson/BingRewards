@@ -158,7 +158,7 @@ Current version 3.15.1
 3.5.3   *) Fixed https://github.com/sealemar/BingRewards/issues/45#issuecomment-45700693
            Two bugs were addressed:
            1. bingAuth - sso is not used any more
-           2. bingQueriesGenerator - Bing! spontaneously returns PC style page for mobile
+           2. bingQueriesGenerator - Bing spontaneously returns PC style page for mobile
               searches. This fix check for both of them.
 
 3.5.2   *) @JustLikeIcarus Added missing commas to list of mobile user agents
@@ -213,22 +213,22 @@ Current version 3.15.1
            to
            BING_QUERY_SUCCESSFULL_RESULT_MARKER = '<div id="b_content">'
 
-3.1.6   *) Case insensitive match on flyout strings. Bing! changed "Search and Earn" to "Search and earn"
+3.1.6   *) Case insensitive match on flyout strings. Bing changed "Search and Earn" to "Search and earn"
 
 3.1.5   *) Fixed Live auth. Credits to jbrobst (GitHub). https://github.com/sealemar/BingRewards/issues/18
 
 3.1.4   *) Fixed a bug in lifetime credits parser. https://github.com/sealemar/BingRewards/issues/13
 
-3.1.3   *) As per https://github.com/sealemar/BingRewards/issues/13 - Bing! Dashboard HTML was changed. This fix accounts for the change.
+3.1.3   *) As per https://github.com/sealemar/BingRewards/issues/13 - Bing Dashboard HTML was changed. This fix accounts for the change.
 
-3.1.2   *) Increased intervals in config.xml. It looks like Bing! black lists an IP if it abuses with frequent requests.
+3.1.2   *) Increased intervals in config.xml. It looks like Bing black lists an IP if it abuses with frequent requests.
 
-3.1.1   *) Bing! authentication URL both for LiveId and Facebook now contains escape characters (http:// is http\x3a\x2f\x2f, for example). Those need to be converted back to normal URL. See [http://docs.python.org/2/library/codecs.html#python-specific-encodings]
+3.1.1   *) Bing authentication URL both for LiveId and Facebook now contains escape characters (http:// is http\x3a\x2f\x2f, for example). Those need to be converted back to normal URL. See [http://docs.python.org/2/library/codecs.html#python-specific-encodings]
         +) Script current version date is now outputed with "--version" argument
 
-3.1     +) config.xml - general.betweenAccountsInterval and general.betweenAccountsSalt - time to sleep between two accounts - not to annoy Bing!
+3.1     +) config.xml - general.betweenAccountsInterval and general.betweenAccountsSalt - time to sleep between two accounts - not to annoy Bing
 
-3.0.3   *) commenting the referer in BingFlyoutParser, because on 10/25/2013 Bing! started to return an empty flyout page if referer is other than http://www.bing.com
+3.0.3   *) commenting the referer in BingFlyoutParser, because on 10/25/2013 Bing started to return an empty flyout page if referer is other than http://www.bing.com
 
 3.0.2   *) the script now looks for default config.xml in the directory where it is located
         *) "pkg" project subfolder is now searched under the script directory
@@ -266,7 +266,7 @@ Current version 3.15.1
 
 2.4     +) main.py - total points earned during the session is now printed out when the script finishes
 
-2.3     *) bingQueriesGenerator - changed parsing HTML tag to comply with new Bing! output
+2.3     *) bingQueriesGenerator - changed parsing HTML tag to comply with new Bing output
 
 2.2     +) bingFlyoutParser now understands descriptions
         +) bingFlyoutParser + Reward.Action.PASS for 'Silver Status' and for 'Get the best of Bing by signing in with Facebook.' description
@@ -283,7 +283,7 @@ Current version 3.15.1
         *) Authentication configuration moved to config.xml. No direct script changes to use different account information are needed.
            config.xml accepts Live and Facebook authentication types. Any number of authentications can be added to config.xml.
 
-1.4     Bing! rewards page changed. Bing! flyout is now requested with http://www.bing.com/rewards/dashboard in a Referer header, otherwise it is empty
+1.4     Bing rewards page changed. Bing flyout is now requested with http://www.bing.com/rewards/dashboard in a Referer header, otherwise it is empty
 
 1.3     Don't raise exception if history page is empty - warn instead.
         added to bingRewards.py:
@@ -291,6 +291,6 @@ Current version 3.15.1
 
 1.2     Configurable salt to sleep between requests
 
-1.1     Bing! news changed the output format for tag <span class="sn_snip">. This version works both with the former and the latter behavior
+1.1     Bing news changed the output format for tag <span class="sn_snip">. This version works both with the former and the latter behavior
 
 1.0     First implementation plus whatever was else before I created this file :)

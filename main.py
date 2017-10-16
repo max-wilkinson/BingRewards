@@ -36,7 +36,7 @@ SCRIPT_VERSION = "3.15.1"
 SCRIPT_DATE = "September 13, 2017"
 
 def earnRewards(config, httpHeaders, userAgents, reportItem, password):
-    """Earns Bing! reward points and populates reportItem"""
+    """Earns Bing reward points and populates reportItem"""
     noException = False
     try:
         if reportItem is None: raise ValueError("reportItem is None")
@@ -137,7 +137,7 @@ def usage():
     print "        --version            print version info"
 
 def printVersion():
-    print "Bing! Rewards Automation script: <http://sealemar.blogspot.com/2012/12/bing-rewards-automation.html>"
+    print "Bing Rewards Automation script: <http://sealemar.blogspot.com/2012/12/bing-rewards-automation.html>"
     print "Version: " + SCRIPT_VERSION + " from " + SCRIPT_DATE
     print "See 'version.txt' for the list of changes"
     print "This code is published under LGPL v3 <http://www.gnu.org/licenses/lgpl-3.0.html>"
