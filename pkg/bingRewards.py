@@ -92,7 +92,6 @@ class BingRewards:
                                             HTTPRefererHandler,                       # add Referer header on redirect
                                             urllib2.HTTPCookieProcessor(cookies))     # keep cookies
 
-<<<<<<< HEAD
     def getLifetimeCredits(self):
 	page = self.getDashboardPage() 
 	
@@ -101,19 +100,6 @@ class BingRewards:
         s = page.find('>', s) + 1
         e = page.find(' ', s)
         points = page[s:e]
-=======
-    def requestFlyoutPage(self):
-        """
-        Returns bing.com flyout page
-        This page shows what rewarding activity can be performed in
-        order to earn Bing points
-        """
-        url = self.BING_FLYOUT_PAGE
-        request = urllib2.Request(url = url, headers = self.httpHeaders)
-
-# commenting the line below, because on 10/25/2013 Bing started to return an empty flyout page if referer is other than http://www.bing.com
-        #request.add_header("Referer", "http://www.bing.com/rewards/dashboard")
->>>>>>> upstream/master
 
         return int(points.replace(",", "")) # remove commas so we can cast as int
 
@@ -205,17 +191,16 @@ class BingRewards:
         with self.opener.open(request) as response:
             page = helpers.getResponseBody(response)
         pointsEarned = self.getRewardsPoints() - pointsEarned
-# if HIT is against bdp.Reward.Type.RE_EARN_CREDITS - check if pointsEarned is the same to
-# pointsExpected
-#This doesn't really work due to the fact that we can't update progressCurrent, so it will hit every time and expect points every time
+        # if HIT is against bdp.Reward.Type.RE_EARN_CREDITS - check if pointsEarned is the same to
+        # pointsExpected
         indCol = bdp.Reward.Type.Col.INDEX
         if reward.tp[indCol] == bdp.Reward.Type.RE_EARN_CREDITS[indCol]:
             pointsExpected = reward.progressMax - reward.progressCurrent
-#            if pointsExpected != pointsEarned:
-#                filename = helpers.dumpErrorPage(page)
-#                res.isError = True
-#                res.message = "Expected to earn " + str(pointsExpected) + " points, but earned " + \
-#                              str(pointsEarned) + " points. Check " + filename + " for further information"
+            if pointsExpected != pointsEarned:
+                filename = helpers.dumpErrorPage(page)
+                res.isError = True
+                res.message = "Expected to earn " + str(pointsExpected) + " points, but earned " + \
+                              str(pointsEarned) + " points. Check " + filename + " for further information"
         return res
 
     def __processWarn(self, reward):
