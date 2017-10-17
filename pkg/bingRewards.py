@@ -15,7 +15,7 @@ import importlib
 import re
 
 import bingCommon
-import bingFlyoutParser as bfp
+import bingDashboardParser as bdp
 import bingHistory
 import helpers
 
@@ -37,16 +37,14 @@ class HTTPRefererHandler(urllib2.HTTPRedirectHandler):
 class BingRewards:
     class RewardResult:
         def __init__(self, reward):
-            if reward is None or not isinstance(reward, bfp.Reward):
+            if reward is None or not isinstance(reward, bdp.Reward):
                 raise TypeError("reward is not of Reward type")
 
             self.o = reward
             self.isError = False
             self.message = ""
 # action applied to the reward
-            self.action  = bfp.Reward.Type.Action.WARN
-
-    BING_FLYOUT_PAGE = "http://www.bing.com/rewardsapp/flyoutpage?style=v2"
+            self.action  = bdp.Reward.Type.Action.WARN
 
     def __init__(self, httpHeaders, userAgents, config):
         """
@@ -94,35 +92,34 @@ class BingRewards:
                                             HTTPRefererHandler,                       # add Referer header on redirect
                                             urllib2.HTTPCookieProcessor(cookies))     # keep cookies
 
-    def requestFlyoutPage(self):
-        """
-        Returns bing.com flyout page
-        This page shows what rewarding activity can be performed in
-        order to earn Bing points
-        """
-        url = self.BING_FLYOUT_PAGE
-        request = urllib2.Request(url = url, headers = self.httpHeaders)
-
-# commenting the line below, because on 10/25/2013 Bing started to return an empty flyout page if referer is other than http://www.bing.com
-        #request.add_header("Referer", "http://www.bing.com/rewards/dashboard")
-
-        with self.opener.open(request) as response:
-            page = helpers.getResponseBody(response)
-        return page
-
     def getLifetimeCredits(self):
+	page = self.getDashboardPage() 
+	
+	# find lifetime points
+        s = page.find(' lifetime points</div>') - 20
+        s = page.find('>', s) + 1
+        e = page.find(' ', s)
+        points = page[s:e]
+
+        return int(points.replace(",", "")) # remove commas so we can cast as int
+
+    def getDashboardPage(self):
         """
         Returns https://account.microsoft.com/rewards Lifetime Credits
         The number of credits earned since day one of the account
         """
-        url = "https://account.microsoft.com/rewards"
+        url = "https://account.microsoft.com/rewards/dashboard"
         request = urllib2.Request(url = url, headers = self.httpHeaders)
         request.add_header("Referer", bingCommon.BING_URL)
         with self.opener.open(request) as response:
             referer = response.geturl()
             page = helpers.getResponseBody(response)
 
-# get form data
+	#If we have already gone through the sign in process once, we don't need to do it again, just return the page
+	if page.find('JavaScript required to sign in') == -1:
+	    return page
+
+	# get form data
         s = page.index('action="')
         s += len('action="')
         e = page.index('"', s)
@@ -156,15 +153,8 @@ class BingRewards:
         request.add_header("Referer", referer)
         with self.opener.open(request) as response:
             page = helpers.getResponseBody(response)
-
-# find lifetime points
-        s = page.find(' lifetime points</div>') - 20
-        s = page.find('>', s) + 1
-        e = page.find(' ', s)
-        points = page[s:e]
-
-        return int(points.replace(",", "")) # remove commas so we can cast as int
-
+  	return page 
+	 
     def getRewardsPoints(self):
         """
         Returns rewards points as int
@@ -194,19 +184,18 @@ class BingRewards:
             return int(rewardsText)
 
     def __processHit(self, reward):
-        """Processes bfp.Reward.Type.Action.HIT and returns self.RewardResult"""
+        """Processes bdp.Reward.Type.Action.HIT and returns self.RewardResult"""
         res = self.RewardResult(reward)
         pointsEarned = self.getRewardsPoints()
         request = urllib2.Request(url = reward.url, headers = self.httpHeaders)
         with self.opener.open(request) as response:
             page = helpers.getResponseBody(response)
         pointsEarned = self.getRewardsPoints() - pointsEarned
-# if HIT is against bfp.Reward.Type.RE_EARN_CREDITS - check if pointsEarned is the same to
-# pointsExpected
-        indCol = bfp.Reward.Type.Col.INDEX
-        if reward.tp[indCol] == bfp.Reward.Type.RE_EARN_CREDITS[indCol]:
-            matches = bfp.Reward.Type.RE_EARN_CREDITS[bfp.Reward.Type.Col.NAME].search(reward.name)
-            pointsExpected = int(matches.group(1))
+        # if HIT is against bdp.Reward.Type.RE_EARN_CREDITS - check if pointsEarned is the same to
+        # pointsExpected
+        indCol = bdp.Reward.Type.Col.INDEX
+        if reward.tp[indCol] == bdp.Reward.Type.RE_EARN_CREDITS[indCol]:
+            pointsExpected = reward.progressMax - reward.progressCurrent
             if pointsExpected != pointsEarned:
                 filename = helpers.dumpErrorPage(page)
                 res.isError = True
@@ -215,7 +204,7 @@ class BingRewards:
         return res
 
     def __processWarn(self, reward):
-        """Processes bfp.Reward.Type.Action.WARN and returns self.RewardResult"""
+        """Processes bdp.Reward.Type.Action.WARN and returns self.RewardResult"""
         res = self.RewardResult(reward)
 
         if reward.isAchieved():
@@ -234,7 +223,7 @@ class BingRewards:
         return res
 
     def __processSearch(self, reward, verbose):
-        """Processes bfp.Reward.Type.Action.SEARCH and returns self.RewardResult"""
+        """Processes bdp.Reward.Type.Action.SEARCH and returns self.RewardResult"""
 
         BING_QUERY_URL = 'http://www.bing.com/search?q='
         BING_QUERY_SUCCESSFULL_RESULT_MARKER_PC = '<div id="b_content">'
@@ -248,7 +237,7 @@ class BingRewards:
             res.message = "This reward has been already achieved"
             return res
 
-        indCol = bfp.Reward.Type.Col.INDEX
+        indCol = bdp.Reward.Type.Col.INDEX
 
 # get a set of queries from today's Bing history
         url = bingHistory.getBingHistoryTodayURL()
@@ -258,7 +247,7 @@ class BingRewards:
         history = bingHistory.parse(page)
 
 # find out how many searches need to be performed
-        matches = bfp.Reward.Type.SEARCH_AND_EARN_DESCR_RE.search(reward.description)
+        matches = bdp.Reward.Type.SEARCH_AND_EARN_DESCR_RE.search(reward.description)
         if matches is None:
             print "No RegEx matches found for this search and earn"
             res.isError = True
@@ -276,13 +265,13 @@ class BingRewards:
 
         headers = self.httpHeaders
 
-        if reward.tp == bfp.Reward.Type.SEARCH_PC or reward.tp == bfp.Reward.Type.SEARCH_AND_EARN:
+        if reward.tp == bdp.Reward.Type.SEARCH_PC or reward.tp == bdp.Reward.Type.SEARCH_AND_EARN:
             headers["User-Agent"] = self.userAgents.pc
             searchesCount += self.addSearchesDesktop + random.randint(0, self.addSearchesDesktopSalt)
             print
             print "Running PC searches"
             print
-        elif reward.tp == bfp.Reward.Type.SEARCH_MOBILE:
+        elif reward.tp == bdp.Reward.Type.SEARCH_MOBILE:
             headers["User-Agent"] = self.userAgents.mobile
             searchesCount += self.addSearchesMobile + random.randint(0, self.addSearchesMobileSalt)
             print
@@ -407,15 +396,15 @@ class BingRewards:
 
         for r in rewards:
             if r.tp is None:
-                action = bfp.Reward.Type.Action.WARN
+                action = bdp.Reward.Type.Action.WARN
             else:
-                action = r.tp[bfp.Reward.Type.Col.ACTION]
+                action = r.tp[bdp.Reward.Type.Col.ACTION]
 
-            if action == bfp.Reward.Type.Action.HIT:
+            if action == bdp.Reward.Type.Action.HIT:
                 res = self.__processHit(r)
-            elif action == bfp.Reward.Type.Action.WARN:
+            elif action == bdp.Reward.Type.Action.WARN:
                 res = self.__processWarn(r)
-            elif action == bfp.Reward.Type.Action.SEARCH:
+            elif action == bdp.Reward.Type.Action.SEARCH:
                 res = self.__processSearch(r, verbose)
             else:
                 res = self.RewardResult(r)
@@ -461,7 +450,7 @@ class BingRewards:
         if result.isError:
             print "   Error    :   true"
         print "   Message  : " + result.message
-        print "   Action   : " + bfp.Reward.Type.Action.toStr(result.action)
+        print "   Action   : " + bdp.Reward.Type.Action.toStr(result.action)
 
 
     def printResults(self, results, verbose):

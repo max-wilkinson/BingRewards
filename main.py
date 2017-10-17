@@ -25,15 +25,15 @@ from bingRewards import BingRewards
 from config import BingRewardsReportItem, Config, ConfigError
 from eventsProcessor import EventsProcessor
 import bingCommon
-import bingFlyoutParser as bfp
+import bingDashboardParser as bdp
 import helpers
 from helpers import BingAccountError
 
 verbose = False
 totalPoints = 0
 
-SCRIPT_VERSION = "3.15.1"
-SCRIPT_DATE = "September 13, 2017"
+SCRIPT_VERSION = "3.16.0"
+SCRIPT_DATE = "October 16, 2017"
 
 def earnRewards(config, httpHeaders, userAgents, reportItem, password):
     """Earns Bing reward points and populates reportItem"""
@@ -52,7 +52,7 @@ def earnRewards(config, httpHeaders, userAgents, reportItem, password):
         bingAuth    = BingAuth(httpHeaders, bingRewards.opener)
         bingAuth.authenticate(reportItem.accountType, reportItem.accountLogin, password)
         reportItem.oldPoints = bingRewards.getRewardsPoints()
-        rewards = bfp.parseFlyoutPage(bingRewards.requestFlyoutPage(), bingCommon.BING_URL)
+        rewards = bdp.parseDashboardPage(bingRewards.getDashboardPage(), bingCommon.ACCOUNT_URL)
 
         if verbose:
             bingRewards.printRewards(rewards)
