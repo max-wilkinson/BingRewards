@@ -26,12 +26,12 @@ Windows
 ### General
 betweenQueriesInterval: Number of seconds between queries  
 betweenQueriesSalt: Random number of seconds added between queries  
-betweenAccountsInterval Number of seconds between accounts  
-betweenAccountsSalt Random number of seconds added between accounds  
-addSearchesDesktop Number of extra desktop searches  
-addSearchesDesktopSalt Random number of added desktop searches  
-addSearchesMobile Number of extra mobile searches  
-addSearchesMobileSalt Random number of added mobile searches  
+betweenAccountsInterval: Number of seconds between accounts  
+betweenAccountsSalt: Random number of seconds added between accounts  
+addSearchesDesktop: Number of extra desktop searches  
+addSearchesDesktopSalt: Random number of added desktop searches  
+addSearchesMobile: Number of extra mobile searches  
+addSearchesMobileSalt: Random number of added mobile searches  
 
 ### Accounts
 You can have as many account tags as you need.  
@@ -59,9 +59,9 @@ onScriptFailure: A special event which occurs only once and if the script fails 
 
 ## Automating
 Linux/Mac: Create cron job  
-Replace `LOCAL_CONFIG_DIR` setting with the path to your Bing Rewards folder  
-You will also need to update the paths in the command to point to your Bing Rewards folder
-The below cronjob will run at 1 am + random(120 minutes)
+Replace `LOCAL_CONFIG_DIR` setting with the path to your Bing Rewards folder.  
+You will also need to update the paths in the command to point to your Bing Rewards folder.
+The below cronjob will run at 1 am + random(120 minutes).
 It will save the console output to to a log file
 ```bash
 SHELL=/bin/bash
