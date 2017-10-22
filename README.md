@@ -47,9 +47,9 @@ You can have as many account tags as you need.
 ```
 
 ### Query Generators
-- bing
-- googleTrends
-- wikipedia
+- **bing**: Uses today's bing news page. Generates terms which may be partial words.
+- **googleTrends**: Uses today's google trends, and google suggested searches. This generator generates whole words, generally consistent with a search syntax. These terms are anything trending and can be NSFW or terms for illegal items.
+- **wikipedia**: Uses today's wikipedia. Generates terms with whole words.
 
 ### Events
 onError: Defines what the script should do when an error occurs durring processing an account.  
