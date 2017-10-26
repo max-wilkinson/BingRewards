@@ -72,6 +72,16 @@ LOCAL_CONFIG_DIR=/home/bingrewards/etc
 ```
 Windows: Use build in Task Scheduler
 
+## Docker
+A Dockerfile is included in this repository. You can build your local version as follows:
+```
+docker build -t bingrewards .
+```
+Once that's built you can run it as follows (make sure you adjust the path to your `config.xml`)
+```
+docker run -it --rm -v /path/to/config.xml:/usr/src/app/config.xml bingrewards
+```
+
 ## References
 - For more information, including how to use this, please, take a look at my blog post:
 [here](http://sealemar.blogspot.com/2012/12/bing-rewards-automation.html)
