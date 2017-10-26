@@ -9,6 +9,7 @@ LABEL \
     org.label-schema.docker.maintainer="Elisiano Petrini <elisiano@gmail.com>"
 
 COPY . /usr/src/app
-RUN apk --no-cache add bash mailx
 WORKDIR /usr/src/app
+RUN apk --no-cache add bash mailx \
+  && pip install -r requirements.txt
 CMD ["python", "main.py"]
