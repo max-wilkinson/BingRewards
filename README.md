@@ -21,6 +21,16 @@ Windows
 > cd path\to\bingrewards
 > python main.py
 ```
+Docker
+A Dockerfile is included in this repository. You can build your local version as follows:
+```
+docker build -t bingrewards .
+```
+Once that's built you can run it as follows (make sure you adjust the path to your `config.xml`)
+```
+docker run -it --rm -v /path/to/config.xml:/usr/src/app/config.xml bingrewards
+```
+
 ## Config
 
 ### General
@@ -71,16 +81,6 @@ LOCAL_CONFIG_DIR=/home/bingrewards/etc
 0   1   *   *   *   sleep $(($RANDOM \% 120))m && python2 /home/bingrewards/bin/main.py 2>&1 | gzip > /home/bingrewards/var/log/bingrewards/`date "+\%Y-\%m-\%dT\%H:\%M:\%S"`.log.gz
 ```
 Windows: Use build in Task Scheduler
-
-## Docker
-A Dockerfile is included in this repository. You can build your local version as follows:
-```
-docker build -t bingrewards .
-```
-Once that's built you can run it as follows (make sure you adjust the path to your `config.xml`)
-```
-docker run -it --rm -v /path/to/config.xml:/usr/src/app/config.xml bingrewards
-```
 
 ## References
 - For more information, including how to use this, please, take a look at my blog post:
