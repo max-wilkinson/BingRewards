@@ -22,13 +22,14 @@ Windows
 > python main.py
 ```
 Docker
+
 A Dockerfile is included in this repository. You can build your local version as follows:
 ```
 docker build -t bingrewards .
 ```
 Once that's built you can run it as follows (make sure you adjust the path to your `config.xml`)
 ```
-docker run -it --rm -v /path/to/config.xml:/usr/src/app/config.xml bingrewards
+docker run -it --rm -v `pwd`/config.xml:/usr/src/app/config.xml bingrewards
 ```
 
 ## Config
