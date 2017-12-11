@@ -93,15 +93,20 @@ class BingRewards:
                                             urllib2.HTTPCookieProcessor(cookies))     # keep cookies
 
     def getLifetimeCredits(self):
-	page = self.getDashboardPage() 
-	
-	# find lifetime points
-        s = page.find(' lifetime points</div>') - 20
-        s = page.find('>', s) + 1
-        e = page.find(' ', s)
-        points = page[s:e]
-
-        return int(points.replace(",", "")) # remove commas so we can cast as int
+        page = self.getDashboardPage()
+        #Figure out which version of the rewards page we're on
+        if page.find("rewards-oneuidashboard") != -1:
+            block = page.split("var dashboard")[1]
+            return int(block[block.index('"lifetimePoints"'):].split(',')[0].split(':')[1])
+        else:
+        # find lifetime points
+            s = page.find(' lifetime points</div>') - 20
+            s = page.find('>', s) + 1
+            e = page.find(' ', s)
+            points = page[s:e]
+            return int(points.replace(",", "")) # remove commas so we can cast as int
+        #should never happen...
+        return 0
 
     def getDashboardPage(self):
         """
