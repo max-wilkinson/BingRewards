@@ -156,7 +156,7 @@ def parseDashboardPage(page, bing_url):
             createReward(currentReward, rewardURL, rewardName, rewardProgressCurrent, rewardProgressMax, rewardDescription)
             allRewards.append(currentReward)
    
-        #Get the rewards on the main dashboard page
+        #Get the rewards on the main dashboard page 
         dashboardOnly = rewardsDashboard.find('div', class_='card-row spacer-32-bottom clearfix')
         links = dashboardOnly.find_all('a')
         i = 0
@@ -187,7 +187,7 @@ def parseDashboardPage(page, bing_url):
             if rewardDescription.get_text().find('You did it!') != -1:
                 rDscSplit = rewardDescription.get_text().split(' ')
                 rewardProgressMax = int(rDscSplit[rDscSplit.index('points.')-1])
-                rewardProgressCurrent = rewardProgressMax
+                rewardProgressCurrent = rewardProgressMax 
             #Grab the point totals for 'HIT' rewards - we're using these as a marker to set the 'HIT' type
             hits = checkForHit(currAction, rewardProgressCurrent, rewardProgressMax, links[i])
             if hits is not None:
@@ -195,45 +195,7 @@ def parseDashboardPage(page, bing_url):
                 rewardProgressMax = hits[1]
             createReward(currentReward, rewardURL, rewardName.get_text(), rewardProgressCurrent, rewardProgressMax, rewardDescription.get_text())
             allRewards.append(currentReward)
-            i+=1
-
-        #Get the top feature reward (top spot on the dashboard) - doing this separately since it's hard to parse as part of the dashboard
-        #first link on the dashboard will be the top spot
-        currentReward = Reward()
-        rewardURL = ''
-        rewardName = ''
-        rewardProgressCurrent = 0
-        rewardProgressMax = 0
-        rewardDescription = ''
-        #need to append the bing url here
-        rewardURL = bing_url + links[i].get('href')
-        rewardName = links[i].find('div', class_='offer-title-height')
-        #if this reward has not been started
-        rewardDescription= links[i].find('div', class_='offer-description-height spacer-20-top ')
-        #'HIT' rewards will have their point total in this field
-        currAction = links[i].find('span', class_='pull-left card-button-line-height margin-right-15')
-        #if the reward is a quiz and partially complete
-        if rewardDescription is None:
-            rewardDescription = links[i].find('div', class_='text-caption progress-text-height clearfix')
-            if rewardDescription.get_text().find('of') != -1:
-                progressStuff = rewardDescription.get_text().split(' ')
-                rewardProgressCurrent = int(progressStuff[0])
-                rewardProgressMax = int(progressStuff[2])
-                #also need to find the new description here
-                rewardDescription = links[i].find('div', class_='offer-description-height spacer-20-top offer-description-margin-bottom')
-        #if the reward is a quiz and fully complete
-        if rewardDescription.get_text().find('You did it!') != -1:
-            rDscSplit = rewardDescription.get_text().split(' ')
-            rewardProgressMax = int(rDscSplit[rDscSplit.index('points.')-1])
-            rewardProgressCurrent = rewardProgressMax 
-        #Grab the point totals for 'HIT' rewards - we're using these as a marker to set the 'HIT' type
-        hits = checkForHit(currAction, rewardProgressCurrent, rewardProgressMax, links[i])
-        if hits is not None:
-            rewardProgressCurrent = hits[0]
-            rewardProgressMax = hits[1]
-        createReward(currentReward, rewardURL, rewardName.get_text(), rewardProgressCurrent, rewardProgressMax, rewardDescription.get_text())
-        allRewards.append(currentReward)
-        i+=1     
+            i+=1     
 
         #Get the top feature reward (top spot on the dashboard) - doing this separately since it's hard to parse as part of the dashboard
         #first link on the dashboard will be the top spot
