@@ -18,6 +18,7 @@ Usage:
 import re
 from datetime import datetime
 from bs4 import BeautifulSoup
+import sys
 
 class Reward:
     "A class to represent a Bing reward"
@@ -102,6 +103,9 @@ def parseDashboardPage(page, bing_url):
     bing_url - url of bing main page - generally http://www.bing.com which will be
                 added to Reward.url as a prefix if appropriate
     """
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+    
     if page is None: raise TypeError("page is None")
     if page.strip() == "": raise ValueError("page is empty")
 
