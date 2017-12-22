@@ -303,15 +303,17 @@ def createRewardNewFormat(page, title, newRwd):
                 rewardProgressMax = int(cleanString(current[1]))
             if attrType == "destination":
                 #since we are splitting on colons the URL is getting split. Need to put it back together here
-                if current[1] == 'https' or current[1] == 'http':
-                    rewardURL = cleanString(current[1]+':'+current[2])
-                else:
-                    rewardURL = cleanString(current[1])
+                if len(current[1]) > 0:
+                    if current[1] == 'https' or current[1] == 'http':
+                        rewardURL = cleanString(current[1]+':'+current[2])
+                    else:
+                        rewardURL = cleanString(current[1])
             if attrType == "daily_set_date" != -1:
                 #if this reward is not for today (sneak peek rewards are tomorrow), we don't want it
-                attrDateObj = datetime.strptime(cleanString(current[1]), '%m/%d/%Y')
-                if not (attrDateObj.year == curDate.year and attrDateObj.month == curDate.month and attrDateObj.day == curDate.day):
-                    isValid = False
+                if len(current[1]) > 0:
+                    attrDateObj = datetime.strptime(cleanString(current[1]), '%m/%d/%Y')
+                    if not (attrDateObj.year == curDate.year and attrDateObj.month == curDate.month and attrDateObj.day == curDate.day):
+                        isValid = False
             if attrType == "complete":
                 if current[1] == 'True':
                     hasComplete = 1
