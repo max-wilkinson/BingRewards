@@ -83,7 +83,7 @@ class queryGenerator:
         self.unusedQueries -= history
         if queriesToGenerate > len(self.unusedQueries):
             self.unusedQueries = self.__pullAll()
-            if queriesToGenerate > len(self.unusedQueries): raise ValueError("to many queries requested")
+            if queriesToGenerate > len(self.unusedQueries): raise ValueError("too many queries requested")
 
         final = random.sample(self.unusedQueries, queriesToGenerate)
         finalSet = set(final)
