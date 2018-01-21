@@ -44,6 +44,7 @@ class Reward:
             ACTION      = 4
 
         SEARCH_AND_EARN_DESCR_RE = re.compile(r"[Uu]p to (\d+) points? (?:per day|today), (\d+) points? per search")
+        SEARCH_AND_EARN_DESCR_RE_MOBILE = re.compile(r"(\d+) points per search on Microsoft Edge mobile app or (\d+) points per search on any other mobile browser, for up to (\d+) mobile searches per day")
         #need to change this to work for hits 
         EARN_CREDITS_RE = re.compile("Earn (\d+) credits?")
 
@@ -53,7 +54,8 @@ class Reward:
         RE_EARN_CREDITS_PASS = (1,    EARN_CREDITS_RE,
                             "Get the best of Bing by signing in with Facebook.", True,  Action.PASS)
         RE_EARN_CREDITS      = (2,    EARN_CREDITS_RE,                     None, True,  Action.HIT)
-        SEARCH_MOBILE        = (3,    "Mobile search",                     None, False, Action.SEARCH)
+        #SEARCH_MOBILE        = (3,    "Mobile search",                     None, False, Action.SEARCH)
+        SEARCH_MOBILE        = (3,    "Edge mobile search",                     None, False, Action.SEARCH)
         SEARCH_PC            = (4,    "PC search",                         None, False, Action.SEARCH)
         YOUR_GOAL            = (5,    "Your goal",                         None, False, Action.INFORM)
         MAINTAIN_GOLD        = (6,    "Maintain Gold",                     None, False, Action.INFORM)
