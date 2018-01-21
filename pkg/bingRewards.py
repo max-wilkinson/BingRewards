@@ -252,8 +252,13 @@ class BingRewards:
         history = bingHistory.parse(page)
 
 # find out how many searches need to be performed
+        matchesMobile = False
         matches = bdp.Reward.Type.SEARCH_AND_EARN_DESCR_RE.search(reward.description)
+        #Mobile description changed, so check that one too
         if matches is None:
+            matches = bdp.Reward.Type.SEARCH_AND_EARN_DESCR_RE_MOBILE.search(reward.description)
+            matchesMobile = True
+        if matches is None: 
             print "No RegEx matches found for this search and earn"
             res.isError = True
             res.message = "No RegEx matches found for this search and earn"
@@ -267,6 +272,18 @@ class BingRewards:
 # reward.progressCurrent is now returning current points, not current searches
 # so divide it by points per search (rewardsCount) to get correct search count needed
         searchesCount -= (reward.progressCurrent * rewardCost) / rewardsCount
+
+        if matchesMobile == True:
+            #new mobile search description gives total search count + points per search for edge/non-edge
+            edgeValue = int(matches.group(1))
+            nonEdgeValue = int(matches.group(2))
+            searchesCount = int(matches.group(3))
+            if self.userAgents.mobile.lower().find("edge") != -1:
+                #we are searching on edge so points go to 200
+                searchesCount -= reward.progressCurrent / edgeValue
+            else:
+                #non-edge search so 100 is the max
+                searchesCount -= reward.progressCurrent / nonEdgeValue
 
         headers = self.httpHeaders
 
