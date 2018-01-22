@@ -5,7 +5,7 @@
 #
 
 """
-Bing! dashboard page parser
+Bing dashboard page parser
 
 Usage:
     from bingDashboardParser import Reward, parseDashboardPage
@@ -19,7 +19,7 @@ import re
 from bs4 import BeautifulSoup
 
 class Reward:
-    "A class to represent a Bing! reward"
+    "A class to represent a Bing reward"
 
     class Type:
         class Action:
