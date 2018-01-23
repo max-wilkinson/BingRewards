@@ -278,7 +278,8 @@ class BingRewards:
             edgeValue = int(matches.group(1))
             nonEdgeValue = int(matches.group(2))
             searchesCount = int(matches.group(3))
-            if self.userAgents.mobile.lower().find("edge") != -1:
+            #apparently ios uses EdgiOS, so we only check the first 3 letters not the full word 'edge'
+            if self.userAgents.mobile.lower().find("edg") != -1:
                 #we are searching on edge so points go to 200
                 searchesCount -= reward.progressCurrent / edgeValue
             else:
