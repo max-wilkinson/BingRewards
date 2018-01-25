@@ -120,11 +120,11 @@ class BingRewards:
             referer = response.geturl()
             page = helpers.getResponseBody(response)
 
-	#If we have already gone through the sign in process once, we don't need to do it again, just return the page
-	if page.find('JavaScript required to sign in') == -1:
-	    return page
+        #If we have already gone through the sign in process once, we don't need to do it again, just return the page
+        if page.find('JavaScript required to sign in') == -1:
+            return page
 
-	# get form data
+        # get form data
         s = page.index('action="')
         s += len('action="')
         e = page.index('"', s)
@@ -158,8 +158,8 @@ class BingRewards:
         request.add_header("Referer", referer)
         with self.opener.open(request) as response:
             page = helpers.getResponseBody(response)
-  	return page 
-	 
+        return page 
+
     def getRewardsPoints(self):
         """
         Returns rewards points as int
