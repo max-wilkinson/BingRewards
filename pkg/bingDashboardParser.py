@@ -245,7 +245,8 @@ def checkForHit(currAction, rewardProgressCurrent, rewardProgressMax, searchLink
     if currAction is not None:
         if rewardProgressCurrent == 0 and rewardProgressMax == 0:
             if currAction.get_text().lower().find('points') != -1:
-                rewardProgressMax = int(currAction.get_text().split(' ')[0])
+                try: rewardProgressMax = int(currAction.get_text().split(' ')[0])
+                except ValueError: pass
                 #Use the button div to determine whether the offer has been completed
                 btn = searchLink.find('div', class_='card-button-height text-caption text-align-center offer-complete-card-button-background border-width-2 offer-card-button-background')
                 if btn is not None:
