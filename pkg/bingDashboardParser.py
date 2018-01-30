@@ -54,7 +54,6 @@ class Reward:
         RE_EARN_CREDITS_PASS = (1,    EARN_CREDITS_RE,
                             "Get the best of Bing by signing in with Facebook.", True,  Action.PASS)
         RE_EARN_CREDITS      = (2,    EARN_CREDITS_RE,                     None, True,  Action.HIT)
-        #SEARCH_MOBILE        = (3,    "Mobile search",                     None, False, Action.SEARCH)
         SEARCH_MOBILE        = (3,    "Edge mobile search",                     None, False, Action.SEARCH)
         SEARCH_PC            = (4,    "PC search",                         None, False, Action.SEARCH)
         YOUR_GOAL            = (5,    "Your goal",                         None, False, Action.INFORM)
@@ -131,7 +130,6 @@ def parseDashboardPage(page, bing_url):
                     validRwd = createRewardNewFormat(page, currentTitle, newRwd)
                     if validRwd:
                        allRewards.append(newRwd)
-
     else:
         #filter out the characters that crash BS (can probably fix this with encoding if someone wants to look into it
         soup = BeautifulSoup(page.replace("&#8212;","").replace("&#10005;","").replace("&#169;","").replace("\u2022","").replace("\u2013","").replace("\u2019",""), 'html.parser')
@@ -245,8 +243,10 @@ def checkForHit(currAction, rewardProgressCurrent, rewardProgressMax, searchLink
     if currAction is not None:
         if rewardProgressCurrent == 0 and rewardProgressMax == 0:
             if currAction.get_text().lower().find('points') != -1:
-                try: rewardProgressMax = int(currAction.get_text().split(' ')[0])
-                except ValueError: pass
+                try: 
+                    rewardProgressMax = int(currAction.get_text().split(' ')[0])
+                except 
+                    ValueError: pass
                 #Use the button div to determine whether the offer has been completed
                 btn = searchLink.find('div', class_='card-button-height text-caption text-align-center offer-complete-card-button-background border-width-2 offer-card-button-background')
                 if btn is not None:
