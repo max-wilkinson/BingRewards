@@ -83,6 +83,10 @@ def earnRewards(config, httpHeaders, userAgents, reportItem, password):
 
         noException = True
 
+    except IOError, e:
+        reportItem.error = e
+        print "IOError: %s" % e
+
     except AuthenticationError, e:
         reportItem.error = e
         print "AuthenticationError:\n%s" % e
