@@ -254,7 +254,7 @@ def checkForHit(currAction, rewardProgressCurrent, rewardProgressMax, searchLink
                 return [rewardProgressCurrent, rewardProgressMax]
 
 def createReward(reward, rUrl, rName, rPC, rPM, rDesc):
-    reward.url = rUrl.strip()
+    reward.url = rUrl.strip().replace(' ', '')
     reward.name = rName.strip().encode('latin-1', 'ignore')
     reward.progressCurrent = rPC
     reward.progressMax = rPM
