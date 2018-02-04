@@ -19,8 +19,6 @@ import bingDashboardParser as bdp
 import bingHistory
 import helpers
 
-import requests
-
 # extend urllib.addinfourl like it defines @contextmanager (to use with "with" keyword)
 urllib.addinfourl.__enter__ = lambda self: self
 urllib.addinfourl.__exit__  = lambda self, type, value, traceback: self.close()
@@ -206,7 +204,6 @@ class BingRewards:
         endIndex = currPage[startIndex:].find('/>')
         #pad here to get to the correct spot
         verificationAttr = currPage[startIndex+49:startIndex+endIndex-2]
-        request = urllib2.Request(url = reward.url, headers = self.httpHeaders)
 
         verificationData = [
             ('id', reward.hitId),
@@ -218,9 +215,9 @@ class BingRewards:
 
         verificationUrl = 'https://account.microsoft.com/rewards/api/reportactivity?refd=www.bing.com&X-Requested-With=XMLHttpRequest'
 
-        with self.opener.open(request) as response:
+        request = urllib2.Request(url = verificationUrl, headers = self.httpHeaders)
+        with self.opener.open(request, urllib.urlencode(verificationData)) as response:
             page = helpers.getResponseBody(response)
-            verificationRequest = requests.post(verificationUrl, headers=self.httpHeaders, cookies=self.cookies, data=verificationData)
         pointsEarned = self.getRewardsPoints() - pointsEarned
         # if HIT is against bdp.Reward.Type.RE_EARN_CREDITS - check if pointsEarned is the same to
         # pointsExpected
