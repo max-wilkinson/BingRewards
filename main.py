@@ -13,6 +13,7 @@ import random
 import sys
 import time
 import urllib2
+import traceback
 
 from socket import error as SocketError
 import errno
@@ -283,4 +284,6 @@ if __name__ == "__main__":
     try:
         __run(config)
     except BaseException, e:
+        if verbose:
+            traceback.print_exc()
         EventsProcessor.onScriptFailure(config, e)
