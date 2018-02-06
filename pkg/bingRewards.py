@@ -66,7 +66,7 @@ class BingRewards:
         self.userAgents  = userAgents
         self.queryGenerator = config.queryGenerator
 
-        cookies = cookielib.CookieJar()
+        self.cookies = cookielib.CookieJar()
 
         if config.proxy:
             if config.proxy.login:
@@ -82,7 +82,7 @@ class BingRewards:
                                             #urllib2.HTTPHandler(debuglevel = 1),      # be verbose on HTTP
                                             urllib2.HTTPSHandler(),
                                             HTTPRefererHandler,                       # add Referer header on redirect
-                                            urllib2.HTTPCookieProcessor(cookies))     # keep cookies
+                                            urllib2.HTTPCookieProcessor(self.cookies))     # keep cookies
 
         else:
             self.opener = urllib2.build_opener(
@@ -90,7 +90,7 @@ class BingRewards:
                                             #urllib2.HTTPHandler(debuglevel = 1),      # be verbose on HTTP
                                             urllib2.HTTPSHandler(),
                                             HTTPRefererHandler,                       # add Referer header on redirect
-                                            urllib2.HTTPCookieProcessor(cookies))     # keep cookies
+                                            urllib2.HTTPCookieProcessor(self.cookies))     # keep cookies
 
     def getLifetimeCredits(self):
         page = self.getDashboardPage()
@@ -148,10 +148,17 @@ class BingRewards:
         e = page.index('"', s)
         t = page[s:e]
 
+        s = page.index('id="pprid"')
+        s = page.index('value="', s)
+        s += len('value="')
+        e = page.index('"', s)
+        pprid = page[s:e] 
+
         postFields = urllib.urlencode({
             "NAP"    : nap,
             "ANON"   : anon,
-            "t"      : t
+            "t"      : t,
+            "pprid"  : pprid
         })
 
         request = urllib2.Request(action, postFields, self.httpHeaders)
@@ -192,8 +199,24 @@ class BingRewards:
         """Processes bdp.Reward.Type.Action.HIT and returns self.RewardResult"""
         res = self.RewardResult(reward)
         pointsEarned = self.getRewardsPoints()
-        request = urllib2.Request(url = reward.url, headers = self.httpHeaders)
-        with self.opener.open(request) as response:
+        currPage = self.getDashboardPage()
+        startIndex = currPage.find('__RequestVerificationToken')
+        endIndex = currPage[startIndex:].find('/>')
+        #pad here to get to the correct spot
+        verificationAttr = currPage[startIndex+49:startIndex+endIndex-2]
+
+        verificationData = [
+            ('id', reward.hitId),
+            ('hash', reward.hitHash),
+            ('timeZone', '-300'),
+            ('activityAmount', '1'),
+            ('__RequestVerificationToken', verificationAttr) #there was a comma here, removed it. Monitor to make sure shit still works
+        ]
+
+        verificationUrl = 'https://account.microsoft.com/rewards/api/reportactivity?refd=www.bing.com&X-Requested-With=XMLHttpRequest'
+
+        request = urllib2.Request(url = verificationUrl, headers = self.httpHeaders)
+        with self.opener.open(request, urllib.urlencode(verificationData)) as response:
             page = helpers.getResponseBody(response)
         pointsEarned = self.getRewardsPoints() - pointsEarned
         # if HIT is against bdp.Reward.Type.RE_EARN_CREDITS - check if pointsEarned is the same to
@@ -449,6 +472,8 @@ class BingRewards:
         if reward.isDone:
             print "is done     : true"
         print "description : %s" % reward.description
+        print "hit identifier: %s" % reward.hitId
+        print "hit hash: %s" % reward.hitHash
 
     def printRewards(self, rewards):
         """

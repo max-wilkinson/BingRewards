@@ -82,6 +82,8 @@ class Reward:
         self.isDone = False         # optional - is set if progress is "Done"
         self.description = ""
         self.tp = None              # is one of self.Type if set
+        self.hitId = None           # only for hits, needed to relay info to verify hit
+        self.hitHash = None         # same as above, needed to relay info to verify hit
 
     def isAchieved(self):
         """
@@ -254,12 +256,16 @@ def checkForHit(currAction, rewardProgressCurrent, rewardProgressMax, searchLink
                     rewardProgressCurrent = rewardProgressMax
                 return [rewardProgressCurrent, rewardProgressMax]
 
-def createReward(reward, rUrl, rName, rPC, rPM, rDesc):
-    reward.url = rUrl.strip()
+def createReward(reward, rUrl, rName, rPC, rPM, rDesc, hitId=None, hitHash=None):
+    reward.url = rUrl.strip().replace(' ','')
     reward.name = rName.strip().encode('latin-1', 'ignore')
     reward.progressCurrent = rPC
     reward.progressMax = rPM
     reward.description = rDesc.strip().encode('latin-1', 'ignore')
+    if hitId:
+        reward.hitId = hitId
+    if hitHash:
+        reward.hitHash = hitHash
     if rPC == rPM:
         reward.isDone = True
 
@@ -291,6 +297,9 @@ def createRewardNewFormat(page, title, newRwd):
     #We're going to use this as at trigger to determine whether to process the reward or throw it out. If there is no "complete" attribute (true/false) then ignore the reward
     hasComplete = -1
     relevantSegment = page[page.index(title):]
+    #need the hash for hits but it is outside of the relevant segment so get it here
+    hitHash = relevantSegment[relevantSegment.find('hash')+7:]
+    hitHash = hitHash[:hitHash.find('","')]
     relevantSegment = relevantSegment[:relevantSegment.index("}")]
     rewardName = cleanString(title)
     #check relevant segment for 'slide_0', if exists switch to slide processing branch - ignoring for now since I'm not sure slides are rewards
@@ -323,14 +332,14 @@ def createRewardNewFormat(page, title, newRwd):
                     hasComplete = 1
                 if current[1] == 'False':
                     hasComplete = 0
-                #this is the last value, once we get it we have everything we need so break
-                break
-
+            if attrType == "offerid":
+                hitIdentifier = cleanString(current[1])
+    
     #if it isn't completeable then it probably isn't a reward, so ignore it
     if hasComplete == -1:
         isValid = False
     if isValid:
-        createReward(newRwd, rewardURL, rewardName, rewardProgressCurrent, rewardProgressMax, rewardDescription)
+        createReward(newRwd, rewardURL, rewardName, rewardProgressCurrent, rewardProgressMax, rewardDescription, hitIdentifier, hitHash)
     return isValid
 
 def cleanString(strToClean):
