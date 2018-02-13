@@ -18,8 +18,10 @@ import traceback
 from socket import error as SocketError
 import errno
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "pkg"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "pkg", "queryGenerators"))
+
+file = os.path.realpath(__file__)
+sys.path.append(os.path.join(os.path.dirname(file), "pkg"))
+sys.path.append(os.path.join(os.path.dirname(file), "pkg", "queryGenerators"))
 
 from bingAuth import BingAuth, AuthenticationError
 from bingRewards import BingRewards
@@ -250,13 +252,16 @@ if __name__ == "__main__":
         usage()
         sys.exit(1)
 
-    configFile = os.path.join(os.path.dirname(__file__), "config.xml")
+    configFile = ""
+    configFileName = None
+  
     showFullReport = False
     for o, a in opts:
         if o in ("-h", "--help"):
             usage()
             sys.exit()
         elif o in ("-f", "--configFile"):
+            configFileName = a
             configFile = a
         elif o in ("-r", "--full-report"):
             showFullReport = True
@@ -267,6 +272,16 @@ if __name__ == "__main__":
             sys.exit()
         else:
             raise NotImplementedError("option '" + o + "' is not implemented")
+
+    #if no config file was specified as an option use the default 
+    if configFileName is None : 
+        configFileName = "config.xml"
+    
+    #if the file doesn't exist, look for it relative to the working and current dirs
+    if not os.path.isfile(configFile):
+        configFile = os.path.join(os.path.dirname(os.path.realpath(__file__)), configFileName)
+        if not os.path.isfile(configFile):
+            configFile = os.path.join(os.getcwd(), configFileName)
 
     print "%s - script started" % helpers.getLoggingTime()
     print "-" * 80
