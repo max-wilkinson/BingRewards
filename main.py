@@ -193,7 +193,9 @@ def __run(config):
 
     doSleep = False
 
-    for key, account in config.accounts.iteritems():
+    accounts = config.accounts.items()
+    random.shuffle(accounts)
+    for key, account in accounts:
         if account.disabled:
             continue
 
