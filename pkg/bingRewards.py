@@ -174,8 +174,8 @@ class BingRewards:
         helpers.errorOnText(page, "You are not signed", "Temporary account ban: User was not successfully signed in.\n")
 
 # parse activity page
-        s = page.index("t.innerHTML='")
-        s += len("t.innerHTML='")
+        s = page.index("var b='")
+        s += len("var b='")
         e = page.index("'", s)
         rewardsText = page[s:e]
         if rewardsText == 'Rewards': # The account is banned
