@@ -1,4 +1,6 @@
-Current version 3.16.1
+Current version 3.16.2
+
+3.16.2  *) @specu, Updated getRewardsPoints to scrap rewards count from changed HTML
 
 3.16.1  *) @specu, Conversion of activity names and descriptions from unicode to ascii
            to avoid issues with functions that don't support unicode
