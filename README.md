@@ -4,7 +4,6 @@ BingRewards is an automated point earning script that works with Bing.com to ear
 
 ## Requirements
 Python 2.7+
-Beautiful Soup (https://www.crummy.com/software/BeautifulSoup/)
 
 ## Running The Script
 Copy *config.xml.dist* to *config.xml*  
