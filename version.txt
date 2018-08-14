@@ -1,4 +1,6 @@
-Current version 3.16.2
+Current version 3.16.3
+
+3.16.3  *) @specu, Removed support for obsolete dashboard and dependency on BeautifulSoup
 
 3.16.2  *) @specu, Updated getRewardsPoints to scrap rewards count from changed HTML
 
