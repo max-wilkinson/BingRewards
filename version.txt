@@ -1,4 +1,6 @@
-Current version 3.16.5
+Current version 3.16.6
+
+3.16.6  *) @specu, Display current day streak as a completed activity for informational purposes only
 
 3.16.5  *) @patrickbryan, Updated parsing to add back old activity page
 
