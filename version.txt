@@ -1,4 +1,10 @@
-Current version 3.16.2
+Current version 3.16.5
+
+3.16.5  *) @patrickbryan, Updated parsing to add back old activity page
+
+3.16.4  *) @dwait, Update followed link request and search result parsing for mobile results
+
+3.16.3  *) @specu, Removed support for obsolete dashboard and dependency on BeautifulSoup
 
 3.16.2  *) @specu, Updated getRewardsPoints to scrap rewards count from changed HTML
 
