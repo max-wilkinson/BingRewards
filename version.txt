@@ -1,4 +1,6 @@
-Current version 3.16.4
+Current version 3.16.5
+
+3.16.5  *) @patrickbryan, Updated parsing to add back old activity page
 
 3.16.4  *) @dwait, Update followed link request and search result parsing for mobile results
 
