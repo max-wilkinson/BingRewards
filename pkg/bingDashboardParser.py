@@ -230,6 +230,14 @@ def createRewardNewFormat(page, title, newRwd):
             if attrType == "offerid":
                 hitIdentifier = cleanString(current[1])
     
+            if rewardName == "Current day streak":
+                hasComplete = 1
+                if attrType == "activity_progress":
+                    rewardDescription = rewardName
+                    rewardProgressCurrent = int(cleanString(current[1]))
+                    rewardProgressMax = int(cleanString(current[1]))
+                    hitIdentifier = ""
+
     #if it isn't completeable then it probably isn't a reward, so ignore it
     if hasComplete == -1:
         isValid = False
