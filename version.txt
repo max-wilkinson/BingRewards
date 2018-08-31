@@ -1,5 +1,7 @@
 Current version 3.16.6
 
+3.16.7  *) @dwait, Support daily search for level 1 accounts
+
 3.16.6  *) @specu, Display current day streak as a completed activity for informational purposes only
 
 3.16.5  *) @patrickbryan, Updated parsing to add back old activity page
