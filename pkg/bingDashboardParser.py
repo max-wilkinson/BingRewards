@@ -29,10 +29,11 @@ class Reward:
             HIT    = 2
             SEARCH = 3
             WARN   = 4
+            QUIZ   = 5
 
             @staticmethod
             def toStr(action):
-                actions = ("pass", "inform", "hit", "search", "warn")
+                actions = ("pass", "inform", "hit", "search", "warn", "quiz")
                 return (actions[action])
 
         class Col:
@@ -66,7 +67,7 @@ class Reward:
         EARN_MORE_POINTS     = (13,   "Earn more points",                  None, False, Action.INFORM)
         SEARCH_AND_EARN      = (14,   "Search and earn",                   None, False, Action.SEARCH)
         THURSDAY_BONUS       = (15,   "Thursday bonus",                    None, False, Action.PASS)
-        RE_QUIZ              = (16,   re.compile(r"\b[Qq]uiz\b"),          None, True,  Action.PASS)
+        RE_QUIZ              = (16,   re.compile(r"\b[Qq]uiz\b"),          None, True,  Action.QUIZ)
         SHOP_AND_EARN        = (17,   "Shop & earn",                       None, False, Action.INFORM)
 
         ALL = (RE_EARN_CREDITS_PASS, RE_EARN_CREDITS, SEARCH_MOBILE, SEARCH_PC, YOUR_GOAL, MAINTAIN_GOLD,
