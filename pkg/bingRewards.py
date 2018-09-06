@@ -202,6 +202,10 @@ class BingRewards:
     def __processHit(self, reward):
         """Processes bdp.Reward.Type.Action.HIT and returns self.RewardResult"""
         res = self.RewardResult(reward)
+        if reward.isAchieved():
+            res.message = "This reward has been already achieved"
+            return res
+
         pointsEarned = self.getRewardsPoints()
         currPage = self.getDashboardPage()
         startIndex = currPage.find('__RequestVerificationToken')
@@ -238,6 +242,10 @@ class BingRewards:
     def __processQuiz(self, reward):
         """Processes bdp.Reward.Type.Action.QUIZ and returns self.RewardResult"""
         res = self.RewardResult(reward)
+        if reward.isAchieved():
+            res.message = "This reward has been already achieved"
+            return res
+
         pointsEarned = self.getRewardsPoints()
         currPage = self.getDashboardPage()
         startIndex = currPage.find('__RequestVerificationToken')
