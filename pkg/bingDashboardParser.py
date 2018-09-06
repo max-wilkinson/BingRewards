@@ -184,7 +184,7 @@ def createReward(reward, rUrl, rName, rPC, rPM, rDesc, hitId=None, hitHash=None)
     #unless the activity already matches other type
     #for 'HIT' rewards (10 points) we assume 10 points, higher values won't be triggered
     #To determine whether a hit is already complete, there is the comparison below
-    if reward.progressMax == 10 and reward.progressCurrent != 10 and reward.tp is not None:
+    if reward.progressMax == 10 and reward.progressCurrent != 10 and reward.tp is None:
         reward.tp = Reward.Type.RE_EARN_CREDITS 
 
 def createRewardNewFormat(page, title, newRwd):
