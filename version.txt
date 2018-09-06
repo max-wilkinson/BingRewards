@@ -1,4 +1,6 @@
-Current version 3.16.6
+Current version 3.16.7
+
+3.16.7  *) @specu, Support for quizzes and other daily activities
 
 3.16.6  *) @specu, Display current day streak as a completed activity for informational purposes only
 
