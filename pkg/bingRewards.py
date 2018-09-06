@@ -245,12 +245,13 @@ class BingRewards:
         #pad here to get to the correct spot
         verificationAttr = currPage[startIndex+49:startIndex+endIndex-2]
 
+        #TODO: last parameter is ', "Timezone" : 240'. Is it needed?
         verificationData = '{"ActivitySubType" : "quiz", "ActivityType" : "notification", "OfferId" : "' + reward.hitId + '", "Channel" : "Bing.Com", "PartnerId" : "BingTrivia"}'
 
         verificationUrl = 'https://www.bing.com/msrewards/api/v1/ReportActivity'
 
         print
-        print "Running quiz: %s" % reward.name
+        print "Running activity: %s" % reward.name
         print
 
         request = urllib2.Request(url = verificationUrl, headers = self.httpHeaders)
