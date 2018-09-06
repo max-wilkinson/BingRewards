@@ -264,7 +264,7 @@ class BingRewards:
 
         request = urllib2.Request(url = verificationUrl, headers = self.httpHeaders)
         for i in range( reward.progressCurrent, reward.progressMax, 10 ):
-            print "%s - %2d/%2d - Quiz: %s" % (helpers.getLoggingTime(), i+10, reward.progressMax, reward.name)
+            print "%s - %2d/%2d - Activity: %s" % (helpers.getLoggingTime(), i+10, reward.progressMax, reward.name)
             with self.opener.open(request, verificationData) as response:
                 page = helpers.getResponseBody(response)
             #default pause between guesses
