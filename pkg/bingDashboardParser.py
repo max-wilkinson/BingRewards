@@ -29,10 +29,11 @@ class Reward:
             HIT    = 2
             SEARCH = 3
             WARN   = 4
+            QUIZ   = 5
 
             @staticmethod
             def toStr(action):
-                actions = ("pass", "inform", "hit", "search", "warn")
+                actions = ("pass", "inform", "hit", "search", "warn", "quiz")
                 return (actions[action])
 
         class Col:
@@ -66,12 +67,16 @@ class Reward:
         EARN_MORE_POINTS     = (13,   "Earn more points",                  None, False, Action.INFORM)
         SEARCH_AND_EARN      = (14,   "Search and earn",                   None, False, Action.SEARCH)
         THURSDAY_BONUS       = (15,   "Thursday bonus",                    None, False, Action.PASS)
-        RE_QUIZ              = (16,   re.compile(r"\b[Qq]uiz\b"),          None, True,  Action.PASS)
+        RE_QUIZ              = (16,   re.compile(r"\b[Qq]uiz\b"),          None, True,  Action.QUIZ)
         SHOP_AND_EARN        = (17,   "Shop & earn",                       None, False, Action.INFORM)
+        STREAK               = (18,   "Current day streak",                None, False, Action.INFORM)
+        DAILY_POLL           = (19,   "Daily Poll",                        None, False, Action.QUIZ)
+        NEWS_QUIZ            = (20,   "Test your smarts",                  None, False, Action.QUIZ)
 
         ALL = (RE_EARN_CREDITS_PASS, RE_EARN_CREDITS, SEARCH_MOBILE, SEARCH_PC, YOUR_GOAL, MAINTAIN_GOLD,
                REFER_A_FRIEND, SEND_A_TWEET, RE_EARNED_CREDITS, COMPLETED, SILVER_STATUS, INVITE_FRIENDS,
-               EARN_MORE_POINTS, SEARCH_AND_EARN, THURSDAY_BONUS, RE_QUIZ, SHOP_AND_EARN)
+               EARN_MORE_POINTS, SEARCH_AND_EARN, THURSDAY_BONUS, RE_QUIZ, SHOP_AND_EARN, STREAK,
+               DAILY_POLL, NEWS_QUIZ)
 
     def __init__(self):
         self.url = ""               # optional
@@ -176,9 +181,10 @@ def createReward(reward, rUrl, rName, rPC, rPM, rDesc, hitId=None, hitHash=None)
                       or t[Reward.Type.Col.DESCRIPTION] == reward.description ):
                             reward.tp = t
 
+    #unless the activity already matches other type
     #for 'HIT' rewards (10 points) we assume 10 points, higher values won't be triggered
-    #To determine whether a hit is already complete, there is logic above to check which div the button uses + the comparison below
-    if reward.progressMax == 10 and reward.progressCurrent != 10:
+    #To determine whether a hit is already complete, there is the comparison below
+    if reward.progressMax == 10 and reward.progressCurrent != 10 and reward.tp is None:
         reward.tp = Reward.Type.RE_EARN_CREDITS 
 
 def createRewardNewFormat(page, title, newRwd):

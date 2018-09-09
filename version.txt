@@ -1,4 +1,6 @@
-Current version 3.16.6
+Current version 3.16.8
+
+3.16.8  *) @specu, Support for quizzes and other daily activities
 
 3.16.7  *) @dwait, Support daily search for level 1 accounts
 
