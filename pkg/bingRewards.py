@@ -295,10 +295,16 @@ class BingRewards:
 
         pointsEarned = self.getRewardsPoints()
         request = urllib2.Request(url = reward.url, headers = self.httpHeaders)
-        with self.opener.open(request) as response:
-            page = helpers.getResponseBody(response)
+        try:
+            with self.opener.open(request) as response:
+                page = helpers.getResponseBody(response)
+        except:
+            res.isError = True
+            res.message = "__processWarn: Unable to open url: '" + reward.url + "'"
+            return res
+
         pointsEarned = self.getRewardsPoints() - pointsEarned
-# check if we earned any points
+        # check if we earned any points
         if pointsEarned < 1:
             res.isError = True
             res.message = "Didn't earn any points for click"

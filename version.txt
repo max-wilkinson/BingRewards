@@ -1,4 +1,6 @@
-Current version 3.16.8
+Current version 3.16.9
+
+3.16.9  *) @specu, Catch exception trying to open 'ms-rewards' and other unsupported URLs
 
 3.16.8  *) @specu, Support for quizzes and other daily activities
 
