@@ -42,6 +42,7 @@ addSearchesDesktop: Number of extra desktop searches
 addSearchesDesktopSalt: Random number of added desktop searches  
 addSearchesMobile: Number of extra mobile searches  
 addSearchesMobileSalt: Random number of added mobile searches  
+ignoreSSLErrors: Ignore SSL errors, default is "0" (for "false", set to "1" for "true")  
 
 ### Accounts
 You can have as many account tags as you need.  

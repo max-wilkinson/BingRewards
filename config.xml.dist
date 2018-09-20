@@ -18,7 +18,8 @@
         addSearchesDesktop="0"
         addSearchesDesktopSalt="20"
         addSearchesMobile="0"
-        addSearchesMobileSalt="20" />
+        addSearchesMobileSalt="20"
+        ignoreSSLErrors="0" />
 
     <!--
     Note: login and password are optional

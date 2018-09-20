@@ -57,6 +57,7 @@ class Config:
             self.addSearchesDesktopSalt  = 0      # default to this number of additional Desktop searches for salt
             self.addSearchesMobile       = 0      # default to this number of additional Mobile searches
             self.addSearchesMobileSalt   = 0      # default to this number of additional Mobile searches for salt
+            self.ignoreSSLErrors         = 0      # don't ignore SSL errors by default ("0"), set to "1" to ignore them
 
     class Proxy:
         """
@@ -426,6 +427,7 @@ class Config:
         g.addSearchesMobileSalt   = self.__parseIntAttr(xmlGeneralNode,   "addSearchesMobileSalt",   g.addSearchesMobileSalt,   "general.addSearchesMobileSalt")
         g.addSearchesDesktop      = self.__parseIntAttr(xmlGeneralNode,   "addSearchesDesktop",      g.addSearchesDesktop,      "general.addSearchesDesktop")
         g.addSearchesDesktopSalt  = self.__parseIntAttr(xmlGeneralNode,   "addSearchesDesktopSalt",  g.addSearchesDesktopSalt,  "general.addSearchesDesktopSalt")
+        g.ignoreSSLErrors         = self.__parseIntAttr(xmlGeneralNode,   "ignoreSSLErrors",         g.ignoreSSLErrors,         "general.ignoreSSLErrors")
 
         self.general = g
 

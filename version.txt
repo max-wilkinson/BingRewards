@@ -1,4 +1,6 @@
-Current version 3.16.9
+Current version 3.16.10
+
+3.16.10  *) @specu, Added a config option ignoreSSLErrors, self-explanatory, default is "0" (for "false", set to "1" for "true")
 
 3.16.9  *) @specu, Catch exception trying to open 'ms-rewards' and other unsupported URLs
 

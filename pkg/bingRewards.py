@@ -11,6 +11,7 @@ import random
 import time
 import urllib
 import urllib2
+import ssl
 import importlib
 import re
 
@@ -62,11 +63,19 @@ class BingRewards:
         self.addSearchesMobileSalt  = int(config.general.addSearchesMobileSalt)
         self.openTopLinkRange       = int(config.general.openTopLinkRange)
         self.openLinkChance         = float(config.general.openLinkChance)
+        self.ignoreSSLErrors        = int(config.general.ignoreSSLErrors)
         self.httpHeaders = httpHeaders
         self.userAgents  = userAgents
         self.queryGenerator = config.queryGenerator
 
         self.cookies = cookielib.CookieJar()
+        
+        # if ignoreSSLErrors == True, create SSL Context to ignore SSL errors 
+        ctx = None
+        if self.ignoreSSLErrors:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
 
         if config.proxy:
             if config.proxy.login:
@@ -80,7 +89,7 @@ class BingRewards:
                                             urllib2.ProxyHandler( { p : proxyString for p in config.proxy.protocols } ),
                                             #urllib2.HTTPSHandler(debuglevel = 1),     # be verbose on HTTPS
                                             #urllib2.HTTPHandler(debuglevel = 1),      # be verbose on HTTP
-                                            urllib2.HTTPSHandler(),
+                                            urllib2.HTTPSHandler(context=ctx),
                                             HTTPRefererHandler,                       # add Referer header on redirect
                                             urllib2.HTTPCookieProcessor(self.cookies))     # keep cookies
 
@@ -88,7 +97,7 @@ class BingRewards:
             self.opener = urllib2.build_opener(
                                             #urllib2.HTTPSHandler(debuglevel = 1),     # be verbose on HTTPS
                                             #urllib2.HTTPHandler(debuglevel = 1),      # be verbose on HTTP
-                                            urllib2.HTTPSHandler(),
+                                            urllib2.HTTPSHandler(context=ctx),
                                             HTTPRefererHandler,                       # add Referer header on redirect
                                             urllib2.HTTPCookieProcessor(self.cookies))     # keep cookies
 
