@@ -50,7 +50,7 @@ class EventsProcessor:
             val = Config.Event.Specifier.evaluate(specifier, self.reportItem)
             command = command.replace(specifier, '"' + str(val) + '"')
 
-# TODO: check return code from subprocess.call() ?
+        # TODO: check return code from subprocess.call() ?
         subprocess.call(command, shell = True)
 
     def __processEventOnReportItem(self, eventType):
@@ -111,9 +111,9 @@ class EventsProcessor:
         _exception_ is an exception derived from BaseException which caused the script to fail
 
         By the nature of this function, it won't fail if _exception_ is None or
-        is not of the class BaseException, but it's better to supply one
-        This function won't fail if _config_ is not supplied. In that case it will simply
-        reraise the exception
+        is not of the class BaseException, but it's better to supply one.
+        This function won't fail if _config_ is not supplied. In that case it will simply return
+        reraise the exception.
 
         returns nothing
         """

@@ -1,4 +1,9 @@
-Current version 3.16.10
+Current version 3.16.11
+
+3.16.11  *) @dwait, Fix indentations, extra spaces, comparisons to None, typos
+            Raise exception on unrecognized dashboard
+            Remove obsolete checkForHit function
+            Cosmetic changes from pull requests 390 and 392
 
 3.16.10  *) @specu, Added a config option ignoreSSLErrors, self-explanatory, default is "0" (for "false", set to "1" for "true")
 

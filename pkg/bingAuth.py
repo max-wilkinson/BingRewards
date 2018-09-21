@@ -56,7 +56,7 @@ class BingAuth:
 
         # get connection URL for provider Live
         urlSearch = self.winLiveId.search(page)
-        if urlSearch == None:
+        if urlSearch is None:
             raise AuthenticationError("Could not find variable 'WindowsLiveId' on Live login page")
         url = urlSearch.group(1).decode("unicode_escape")
 
@@ -68,13 +68,13 @@ class BingAuth:
 
         # get PPFT parameter
         PPFTSearch = self.ppftValue.search(page)
-        if PPFTSearch == None:
+        if PPFTSearch is None:
             raise AuthenticationError("Could not find variable 'PPFT' on Live login page")
         PPFT = PPFTSearch.group(1)
 
         # get PPSX parameter
         ppsxSearch = self.ppsxValue.search(page)
-        if ppsxSearch == None:
+        if ppsxSearch is None:
             raise AuthenticationError("Could not find PassportRN variable on Live login page")
         PPSX = ppsxSearch.group(1)
 
@@ -83,7 +83,7 @@ class BingAuth:
 
         # get url to post data to
         urlSearch = self.urlPostValue.search(page)
-        if urlSearch == None:
+        if urlSearch is None:
             raise AuthenticationError("Could not find variable 'urlPost' on Live login page")
         url = urlSearch.group(1)
 
@@ -148,7 +148,7 @@ class BingAuth:
         helpers.errorOnText(page, "//account.live.com/tou/accrue", "Please log in (log out first if necessary) through a browser and accept the Terms Of Use")
 
         contSubmitUrl = self.formAction.search(page)
-        if contSubmitUrl == None:
+        if contSubmitUrl is None:
             raise AuthenticationError("Could not find form action for continue page")
         url = contSubmitUrl.group(1)
 

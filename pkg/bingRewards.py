@@ -44,7 +44,7 @@ class BingRewards:
             self.o = reward
             self.isError = False
             self.message = ""
-# action applied to the reward
+            # action applied to the reward
             self.action  = bdp.Reward.Type.Action.WARN
 
     def __init__(self, httpHeaders, userAgents, config):
@@ -103,19 +103,17 @@ class BingRewards:
 
     def getLifetimeCredits(self):
         page = self.getDashboardPage()
-        #Figure out which version of the rewards page we're on
+        # Figure out which version of the rewards page we're on
         if page.find("rewards-oneuidashboard") != -1:
             block = page.split("var dashboard")[1]
             return int(block[block.index('"lifetimePoints"'):].split(',')[0].split(':')[1])
         else:
-        # find lifetime points
+            # find lifetime points
             s = page.find(' lifetime points</div>') - 20
             s = page.find('>', s) + 1
             e = page.find(' ', s)
             points = page[s:e]
             return int(points.replace(",", "")) # remove commas so we can cast as int
-        #should never happen...
-        return 0
 
     def getDashboardPage(self):
         """
@@ -129,7 +127,7 @@ class BingRewards:
             referer = response.geturl()
             page = helpers.getResponseBody(response)
 
-        #If we have already gone through the sign in process once, we don't need to do it again, just return the page
+        # If we have already gone through the sign in process once, we don't need to do it again, just return the page
         if page.find('JavaScript required to sign in') == -1:
             return page
 
@@ -174,13 +172,12 @@ class BingRewards:
         request.add_header("Referer", referer)
         with self.opener.open(request) as response:
             page = helpers.getResponseBody(response)
+
         return page 
 
     def getRewardsPoints(self):
-        """
-        Returns rewards points as int
-        """
-# report activity
+        """Returns rewards points as int"""
+        # report activity
         postFields = urllib.urlencode( { "url" : bingCommon.BING_URL, "V" : "web" } )
         url = "http://www.bing.com/rewardsapp/reportActivity"
         request = urllib2.Request(url, postFields, self.httpHeaders)
@@ -192,7 +189,7 @@ class BingRewards:
             raise Exception("Rewards points page is empty. That could mean you are not signed up for rewards with this account")
 
          # There are instances where the account appears to be signed in, but really is not
-        helpers.errorOnText(page, "You are not signed", "Temporary account ban: User was not successfully signed in.\n")
+        helpers.errorOnText(page, "You are not signed in", "Temporary account ban: User was not successfully signed in.\n")
 
         # parse activity page
         indCheck = "var b='"
@@ -219,7 +216,7 @@ class BingRewards:
         currPage = self.getDashboardPage()
         startIndex = currPage.find('__RequestVerificationToken')
         endIndex = currPage[startIndex:].find('/>')
-        #pad here to get to the correct spot
+        # pad here to get to the correct spot
         verificationAttr = currPage[startIndex+49:startIndex+endIndex-2]
 
         verificationData = [
@@ -336,21 +333,21 @@ class BingRewards:
 
         indCol = bdp.Reward.Type.Col.INDEX
 
-# get a set of queries from today's Bing history
+        # get a set of queries from today's Bing history
         url = bingHistory.getBingHistoryTodayURL()
         request = urllib2.Request(url = url, headers = self.httpHeaders)
         with self.opener.open(request) as response:
             page = helpers.getResponseBody(response)
         history = bingHistory.parse(page)
 
-# find out how many searches need to be performed
+        # find out how many searches need to be performed
         matchesMobile = False
         matches = bdp.Reward.Type.SEARCH_AND_EARN_DESCR_RE.search(reward.description)
-        #Mobile description changed, so check that one too
+        # Mobile description changed, so check that one too
         if matches is None:
             matches = bdp.Reward.Type.SEARCH_AND_EARN_DESCR_RE_MOBILE.search(reward.description)
             matchesMobile = True
-        if matches is None: 
+        if matches is None:
             print "No RegEx matches found for this search and earn"
             res.isError = True
             res.message = "No RegEx matches found for this search and earn"
@@ -360,22 +357,22 @@ class BingRewards:
         rewardCost      = 1 # Looks like it's now always X points per one search
         searchesCount = maxRewardsCount * rewardCost / rewardsCount
 
-# adjust to the current progress
-# reward.progressCurrent is now returning current points, not current searches
-# so divide it by points per search (rewardsCount) to get correct search count needed
+        # adjust to the current progress
+        # reward.progressCurrent is now returning current points, not current searches
+        # so divide it by points per search (rewardsCount) to get correct search count needed
         searchesCount -= (reward.progressCurrent * rewardCost) / rewardsCount
 
         if matchesMobile == True:
-            #new mobile search description gives total search count + points per search for edge/non-edge
+            # new mobile search description gives total search count + points per search for edge/non-edge
             edgeValue = int(matches.group(1))
             nonEdgeValue = int(matches.group(2))
             searchesCount = int(matches.group(3))
-            #apparently ios uses EdgiOS, so we only check the first 3 letters not the full word 'edge'
+            # apparently ios uses EdgiOS, so we only check the first 3 letters not the full word 'edge'
             if self.userAgents.mobile.lower().find("edg") != -1:
-                #we are searching on edge so points go to 200
+                # we are searching on edge so points go to 200
                 searchesCount -= reward.progressCurrent / edgeValue
             else:
-                #non-edge search so 100 is the max
+                # non-edge search so 100 is the max
                 searchesCount -= reward.progressCurrent / nonEdgeValue
 
         headers = self.httpHeaders
@@ -416,13 +413,13 @@ class BingRewards:
             print "Requested:", searchesCount
             print "Generated:", len(queries)
 
-        successfullQueries = 0
+        successfulQueries = 0
         i = 1
         totalQueries = len(queries)
 
         for query in queries:
             if i > 1:
-# sleep some time between queries (don't worry Bing ;) )
+                # sleep some time between queries (don't worry Bing ;) )
                 t = self.betweenQueriesInterval + random.uniform(0, self.betweenQueriesSalt)
                 time.sleep(t)
 
@@ -434,7 +431,7 @@ class BingRewards:
             with self.opener.open(request) as response:
                 page = helpers.getResponseBody(response)
 
-# check for the successfull marker
+            # check for the successful marker
             found = page.find(BING_QUERY_SUCCESSFULL_RESULT_MARKER_PC) != -1 \
                  or page.find(BING_QUERY_SUCCESSFULL_RESULT_MARKER_MOBILE) != -1
 
@@ -445,7 +442,7 @@ class BingRewards:
                 print "returned no results, check " + filename + " file for more information"
 
             else:
-                successfullQueries += 1
+                successfulQueries += 1
 
                 # randomly open a link
                 if self.openLinkChance > random.random():
@@ -489,10 +486,10 @@ class BingRewards:
 
             i += 1
 
-        if successfullQueries < searchesCount:
-            res.message = str(successfullQueries) + " out of " + str(searchesCount) + " requests were successfully processed"
+        if successfulQueries < searchesCount:
+            res.message = str(successfulQueries) + " out of " + str(searchesCount) + " requests were successfully processed"
         else:
-            res.message = "All " + str(successfullQueries) + " requests were successfully processed"
+            res.message = "All " + str(successfulQueries) + " requests were successfully processed"
 
         # reset header to pc so pc pages return in getting life time points
         headers["User-Agent"] = self.userAgents.pc

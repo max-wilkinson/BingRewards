@@ -45,7 +45,7 @@ class Reward:
 
         SEARCH_AND_EARN_DESCR_RE = re.compile(r"[Uu]p to (\d+) points? (?:per day|today), (\d+) points? per search")
         SEARCH_AND_EARN_DESCR_RE_MOBILE = re.compile(r"(\d+) points per search on Microsoft Edge mobile app or (\d+) points per search on any other mobile browser, for up to (\d+) mobile searches per day")
-        #need to change this to work for hits 
+        # need to change this to work for hits
         EARN_CREDITS_RE = re.compile("Earn (\d+) credits?")
 
 #       Alias                   Index Reward.name
@@ -61,7 +61,7 @@ class Reward:
         REFER_A_FRIEND       = (7,    "Refer-A-Friend",                    None, False, Action.PASS)
         SEND_A_TWEET         = (8,    "Send a Tweet",                      None, False, Action.PASS)
         RE_EARNED_CREDITS    = (9,    re.compile("Earned \d+ credits?"),   None, True,  Action.PASS)
-        COMPLETED            = (10,    "Completed",                        None, False, Action.PASS)
+        COMPLETED            = (10,   "Completed",                         None, False, Action.PASS)
         SILVER_STATUS        = (11,   "Silver Status",                     None, False, Action.PASS)
         INVITE_FRIENDS       = (12,   "Invite friends",                    None, False, Action.PASS)
         EARN_MORE_POINTS     = (13,   "Earn more points",                  None, False, Action.INFORM)
@@ -119,17 +119,17 @@ def parseDashboardPage(page, bing_url):
 
     allRewards = []
 
-    #if this is the new type of dashboard page (there's probably a better way to figure this out)
+    # if this is the new type of dashboard page (there's probably a better way to figure this out)
     if page.find("rewards-oneuidashboard") != -1:
         page = page.split("var dashboard")[1]
-        #Rewards can be listed more than once so track here and skip those that are already complete
+        # Rewards can be listed more than once so track here and skip those that are already complete
         allTitles = set()
         for attrPair in page.split(',"'):
             current = attrPair.replace('"','').split(':')
             if current[0] == "title":
                 currentTitle = current[1].strip()
                 if currentTitle in allTitles:
-                    #already have this reward, skip it
+                    # already have this reward, skip it
                     continue
                 else:
                     newRwd = Reward()
@@ -137,24 +137,10 @@ def parseDashboardPage(page, bing_url):
                     validRwd = createRewardNewFormat(page, currentTitle, newRwd)
                     if validRwd:
                        allRewards.append(newRwd)
-    #else:
-        #unrecognized dashboard
+    else:
+        raise helpers.BingAccountError("Unrecognized dashboard page")
 
     return allRewards
-
-def checkForHit(currAction, rewardProgressCurrent, rewardProgressMax, searchLink):
-    if currAction is not None:
-        if rewardProgressCurrent == 0 and rewardProgressMax == 0:
-            if currAction.get_text().lower().find('points') != -1:
-                try: 
-                    rewardProgressMax = int(currAction.get_text().split(' ')[0])
-                except ValueError:
-                    pass
-                #Use the button div to determine whether the offer has been completed
-                btn = searchLink.find('div', class_='card-button-height text-caption text-align-center offer-complete-card-button-background border-width-2 offer-card-button-background')
-                if btn is not None:
-                    rewardProgressCurrent = rewardProgressMax
-                return [rewardProgressCurrent, rewardProgressMax]
 
 def createReward(reward, rUrl, rName, rPC, rPM, rDesc, hitId=None, hitHash=None):
     reward.url = rUrl.strip().replace(' ','')
@@ -181,9 +167,9 @@ def createReward(reward, rUrl, rName, rPC, rPM, rDesc, hitId=None, hitHash=None)
                       or t[Reward.Type.Col.DESCRIPTION] == reward.description ):
                             reward.tp = t
 
-    #unless the activity already matches other type
-    #for 'HIT' rewards (10 points) we assume 10 points, higher values won't be triggered
-    #To determine whether a hit is already complete, there is the comparison below
+    # Unless the activity already matches other type
+    # for 'HIT' rewards (10 points) we assume 10 points, higher values won't be triggered.
+    # To determine whether a hit is already complete, there is the comparison below.
     if reward.progressMax == 10 and reward.progressCurrent != 10 and reward.tp is None:
         reward.tp = Reward.Type.RE_EARN_CREDITS 
 
@@ -195,20 +181,20 @@ def createRewardNewFormat(page, title, newRwd):
     rewardProgressCurrent = 0
     rewardProgressMax = 0
     rewardDescription = ''
-    #We're going to use this as at trigger to determine whether to process the reward or throw it out. If there is no "complete" attribute (true/false) then ignore the reward
+    # We're going to use this as at trigger to determine whether to process the reward or throw it out. If there is no "complete" attribute (true/false) then ignore the reward
     hasComplete = -1
     relevantSegment = page[page.index(title):]
-    #need the hash for hits but it is outside of the relevant segment so get it here
+    # need the hash for hits but it is outside of the relevant segment so get it here
     hitHash = relevantSegment[relevantSegment.find('hash')+7:]
     hitHash = hitHash[:hitHash.find('","')]
     relevantSegment = relevantSegment[:relevantSegment.index("}")]
     rewardName = cleanString(title)
-    #check relevant segment for 'slide_0', if exists switch to slide processing branch - ignoring for now since I'm not sure slides are rewards
+    # check relevant segment for 'slide_0', if exists switch to slide processing branch - ignoring for now since I'm not sure slides are rewards
     if relevantSegment.find("slide_") == -1:
         for attrPair in relevantSegment.split(',"'):
             current = attrPair.replace('"','').split(':')
             attrType = current[0].strip().replace('"','')
-            #usually just 'description' but some rewards use slide prefix ex: slide_1_description, slide_2_description. Might be better to use regex here
+            # usually just 'description' but some rewards use slide prefix ex: slide_1_description, slide_2_description. Might be better to use regex here
             if attrType == "description":
                 rewardDescription = cleanString(current[1])
             if attrType == "progress":
@@ -216,14 +202,14 @@ def createRewardNewFormat(page, title, newRwd):
             if attrType == "max":
                 rewardProgressMax = int(cleanString(current[1]))
             if attrType == "destination":
-                #since we are splitting on colons the URL is getting split. Need to put it back together here
+                # since we are splitting on colons the URL is getting split. Need to put it back together here
                 if len(current[1]) > 0:
                     if current[1] == 'https' or current[1] == 'http':
                         rewardURL = cleanString(current[1]+':'+current[2])
                     else:
                         rewardURL = cleanString(current[1])
             if attrType == "daily_set_date" != -1:
-                #if this reward is not for today (sneak peek rewards are tomorrow), we don't want it
+                # if this reward is not for today (sneak peek rewards are tomorrow), we don't want it
                 if len(current[1]) > 0:
                     attrDateObj = datetime.strptime(cleanString(current[1]), '%m/%d/%Y')
                     if not (attrDateObj.year == curDate.year and attrDateObj.month == curDate.month and attrDateObj.day == curDate.day):
@@ -235,7 +221,7 @@ def createRewardNewFormat(page, title, newRwd):
                     hasComplete = 0
             if attrType == "offerid":
                 hitIdentifier = cleanString(current[1])
-    
+
             if rewardName == "Current day streak":
                 hasComplete = 1
                 if attrType == "activity_progress":
@@ -244,7 +230,7 @@ def createRewardNewFormat(page, title, newRwd):
                     rewardProgressMax = int(cleanString(current[1]))
                     hitIdentifier = ""
 
-    #if it isn't completeable then it probably isn't a reward, so ignore it
+    # if it isn't completeable then it probably isn't a reward, so ignore it
     if hasComplete == -1:
         isValid = False
     if isValid:
