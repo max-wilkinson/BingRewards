@@ -34,15 +34,15 @@ docker run -it --rm -v `pwd`/config.xml:/usr/src/app/config.xml bingrewards
 ## Config
 
 ### General
-betweenQueriesInterval: Number of seconds between queries  
-betweenQueriesSalt: Random number of seconds added between queries  
-betweenAccountsInterval: Number of seconds between accounts  
-betweenAccountsSalt: Random number of seconds added between accounts  
-addSearchesDesktop: Number of extra desktop searches  
-addSearchesDesktopSalt: Random number of added desktop searches  
-addSearchesMobile: Number of extra mobile searches  
-addSearchesMobileSalt: Random number of added mobile searches  
-ignoreSSLErrors: Ignore SSL errors, default is "0" (for "false", set to "1" for "true")  
+**betweenQueriesInterval**: Number of seconds between queries  
+**betweenQueriesSalt**: Random number of seconds added between queries  
+**betweenAccountsInterval**: Number of seconds between accounts  
+**betweenAccountsSalt**: Random number of seconds added between accounts  
+**addSearchesDesktop**: Number of extra desktop searches  
+**addSearchesDesktopSalt**: Random number of added desktop searches  
+**addSearchesMobile**: Number of extra mobile searches  
+**addSearchesMobileSalt**: Random number of added mobile searches  
+**ignoreSSLErrors**: Ignore SSL errors, default is "0" (for "false", set to "1" for "true")  
 
 ### Accounts
 You can have as many account tags as you need.  
@@ -63,10 +63,10 @@ You can have as many account tags as you need.
 - **wikipedia**: Uses today's wikipedia. Generates terms with whole words.
 
 ### Events
-onError: Defines what the script should do when an error occurs during processing an account.  
-onComplete: Defines how the script should behave when it completes processing an account.  
-onScriptComplete: A special event which occurs only once when the script finishes executing.  
-onScriptFailure: A special event which occurs only once and if the script fails with exception some time after successfully loading the config.
+**onError**: Defines what the script should do when an error occurs during processing an account.  
+**onComplete**: Defines how the script should behave when it completes processing an account.  
+**onScriptComplete**: A special event which occurs only once when the script finishes executing.  
+**onScriptFailure**: A special event which occurs only once and if the script fails with exception some time after successfully loading the config.
 
 ## Automating
 Linux/Mac: Create cron job  
